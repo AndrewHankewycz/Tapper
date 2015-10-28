@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Shooter</title>
+    <link href="css/screen.css" media="all" rel="stylesheet" type="text/css"/>
+    <script language="javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js" type="text/javascript"></script>
+    <!-- <script language="javascript" src="javascripts/jquery.hotkeys.js" type="text/javascript"></script> -->
+    <!-- <script language="javascript" src="javascripts/key_status.js" type="text/javascript"></script> -->
+    <!-- <script language="javascript" src="javascripts/util.js" type="text/javascript"></script> -->
+    <!-- <script language="javascript" src="javascripts/sprite.js" type="text/javascript"></script> -->
+    <!-- <script language="javascript" src="javascripts/sound.js" type="text/javascript"></script> -->
+  </head>
+  <body>
+    <script type="text/javascript">
+      var CANVAS_WIDTH = 500;
+      var CANVAS_HEIGHT = 400;
+      // used to look up the status of a key, given key name -> find index in status
+      var keyCode = {
+        'left': 37,
+        'right': 39,
+        'space': 32
+      };
+      // used to store status of keys pressed, event.keyCode is used as key
+      var keyStatus = {
+        // left, right, space
+        37: false,
+        39: false,
+        32: false
+      }
+      var player = new Player();
+      var bullets = [];   // array to store bullet objects
+      var enemies = [];   // array to store enemy objects
+      var GAME_OVER = false;
+
+      var canvasElement = $("<canvas width='" + CANVAS_WIDTH +
+                            "' height='" + CANVAS_HEIGHT + "' style='border:1px solid #000000;'></canvas>");
+      var canvas = canvasElement.get(0).getContext("2d");
+      canvasElement.appendTo('body');
+
+      var FPS = 30;
+      setInterval(function() {
+        // console.log("running");
+        update();
+        draw();
+      }, 1000/FPS);
+
+      // constructor for player object
+      function Player(){
+        // player instance variables
+        this.color = "#00A";
+        this.width = CANVAS_WIDTH / 3;
+        this.height = 50;
+        // this.x = (CANVAS_WIDTH / 2) - (this.width / 2);
+        this._currentPos = 1;    // player starts in the middle
+        this._y = CANVAS_HEIGHT - this.height;
+        var _xPositions = [0, CANVAS_WIDTH / 3, (CANVAS_WIDTH / 3) * 2];   // lut for player x positions
+        this._x = _xPositions[this._currentPos];
+
+        // draw player
+        this.draw = function(){
+          canvas.fillStyle = this.color;
+          canvas.fillRect(this._x, this._y, this.width, this.height);
+        }
+
+        // moves player position to left
+        this.moveLeft = function(){
+          if(this._currentPos > 0){
+            this._currentPos--;
+            this._x = _xPositions[this._currentPos];
+          }
+        }
+
+        // moves player position to right
+        this.moveRight = function(){
+          if(this._currentPos < 2){
+            this._currentPos++;
+            this._x = _xPositions[this._currentPos];
+          }
+        }
+
+        // get coords of player center point
+        this.centerPoint = function(){
+          return {x:this._x + (this.width / 2), y: CANVAS_HEIGHT - this.height};
+        }
+
+        // get player x position
+        this.getX = function(){
+          return this._x;
+        }
+
+        // get player y position
+        this.getY = function(){
+          return this._y;
+        }
+
+        // player shoots a missile
+        this.shoot = function(){
+          bullets.push(new Bullet(this.centerPoint()));
+        }
+
+        // check for collisions with enemy
+        this.collision = function(e){
+          return e.y + e.height>= this._y;
+        }
+      }
+
+       function Bullet(startPos){
+         // instance variables
+         this.active = true;
+         this.yVelocity = -6;   // moving upward
+         this.x = startPos.x;
+         this.y = startPos.y;
+         this.width = 5;
+         this.height = 5;
+         this.color = "#00A";
+
+         return this;
+       }
+
+       Bullet.prototype = {
+         inBounds: function(){
+           var inside = this.x >= 0 && this.x <= CANVAS_WIDTH
+              && this.y >= 0 && this.y <= CANVAS_HEIGHT;
+           if(!inside)
+              GAME_OVER = true;
+           return inside;
+         },
+         draw: function(){
+           canvas.fillStyle = this.color;
+           canvas.fillRect(this.x, this.y, this.width, this.height);
+         },
+         update: function(){
+           this.y += this.yVelocity;
+           this.active = this.active && this.inBounds();
+         },
+         explode: function(){
+           this.active = false;
+         }
+       };
+
+       function Enemy(){
+         // instance variables
+         this.active = true;
+         this.width = 40;
+         this.height = 40;
+         this.yVelocity = 3;   // moving downward
+         var _start = Math.floor(Math.random() * 3);
+         var _offset = (CANVAS_WIDTH / 3) / 2 - (this.width / 2);
+         this._xPositions = [0 + _offset, (CANVAS_WIDTH / 3) + _offset, ((CANVAS_WIDTH / 3) * 2) + _offset];   // lut for player x positions
+         this.x = this._xPositions[_start];
+         this.y = 0;
+         this._colors = ['#87DEDE', '#B387DE', "#B3DE87"]
+         this.color = this._colors[Math.floor(Math.random()*3)];
+         return this;
+       }
+
+       Enemy.prototype = {
+         inBounds: function(){
+           return this.x >= 0 && this.x <= CANVAS_WIDTH
+              && this.y >= 0 && this.y <= CANVAS_HEIGHT;
+         },
+         draw: function(){
+           canvas.fillStyle = this.color;
+           canvas.fillRect(this.x, this.y, this.width, this.height);
+         },
+         update: function(){
+           this.y += this.yVelocity;
+           this.active = this.active && this.inBounds();
+         },
+         collision: function(b){
+           return b.x >= this.x && b.x <= (this.x + this.height) &&
+            b.y >= this.y && b.y <= (this.y + this.height);
+         },
+         explode: function(){
+           this.active = false;
+         }
+       };
+
+       // calls update method of each bullet so they can refresh their position
+       function update(){
+         if (keyStatus[keyCode['left']]) {
+           player.moveLeft();
+           keyStatus[keyCode['left']] = false;    // move has been acknowledged
+         }
+         if (keyStatus[keyCode['right']]) {
+           player.moveRight();
+           keyStatus[keyCode['right']] = false;    // move has been acknowledged
+         }if (keyStatus[keyCode['space']]) {
+           player.shoot();
+           keyStatus[keyCode['space']] = false;    // move has been acknowledged
+         }
+
+         bullets.forEach(function(bullet){
+           bullet.update();
+         });
+         enemies.forEach(function(enemy){
+           enemy.update();
+         });
+
+        // filters the array returning new array with all those that returned true
+        bullets = bullets.filter(function(bullet){
+          return bullet.active;
+        });
+        enemies = enemies.filter(function(enemy){
+          return enemy.active;
+        });
+
+        checkBulletHits();
+        checkEnemyKills();
+
+        if(GAME_OVER){
+          console.log("GAME OVER");
+          gameOver();
+        }
+        if(Math.random() < .05) {
+          enemies.push(new Enemy());
+        }
+      }
+
+      function gameOver(){
+        enemies = [];   // clear array
+        bullets = [];
+        GAME_OVER = false;
+      }
+
+      // redraws the canvas with all elements
+      function draw() {
+        canvas.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        player.draw();
+        bullets.forEach(function(bullet){
+          bullet.draw();
+        });
+        enemies.forEach(function(enemy){
+          enemy.draw();
+        });
+      }
+
+      // checks for bullet collisions with enemies
+      function checkBulletHits(){
+        bullets.forEach(function(b){
+          enemies.forEach(function(e){
+            if(e.collision({x: b.x, y: b.y})){
+              e.explode();
+              b.explode();
+            }
+          }); // end for
+        }); // end for
+      }
+
+      // check if any of the enemies have hit the player
+      function checkEnemyKills(){
+        enemies.forEach(function(e){
+          if(player.collision({x: e.x, y: e.y, width: e.width, height: e.height})){
+            gameOver();
+          }
+        });
+      }
+
+      $(document).bind("keydown", function(event) {
+        keyStatus[event.keyCode] = true;
+      });
+
+      $(document).bind("keyup", function(event) {
+        keyStatus[event.keyCode] = false;
+      });
+
+    </script>
+  </body>
+</html>

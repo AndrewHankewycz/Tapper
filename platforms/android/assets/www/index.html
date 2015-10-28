@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *"> -->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script type="text/javascript" src="js/bullet.js"></script>
+        <script type="text/javascript" src="js/player.js"></script>
+        <script type="text/javascript" src="js/enemy.js"></script>
+    </head>
+    <body>
+      <script id="game-tpl" type="text/x-handlebars-template">
+        <canvas id='game-canvas' width='{{width}}' height='{{height}}' style='border:1px solid #000000;'></canvas>
+
+      </script>
+
+      <script id="home-tpl" type="text/template">
+        <!-- <header class="bar bar-nav">
+            <h1 class="title">Directory</h1>
+        </header> -->
+        <div class="bar bar-standard bar-header-secondary">
+            <input class='search-key' type="search"/>
+        </div>
+        <div class="content">{{width}}x{{height}}</div>
+    </script>
+
+        <!-- <script stype="text/javascript" rc="lib/jquery.js"></script> -->
+        <script type="text/javascript" src="lib/handlebars.js"></script>
+        <!-- <script type="text/javascript" src="cordova.js"></script> -->
+        <!-- <script type="text/javascript" src="js/index.js"></script> -->
+        <script type="text/javascript" src="js/app.js"></script>
+    </body>
+</html>
