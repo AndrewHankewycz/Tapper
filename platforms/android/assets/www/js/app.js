@@ -57,9 +57,10 @@
     // get a reference to the canvas created by Handlbars template
     var canvasElement = $('#game-canvas')[0];
     var canvas = canvasElement.getContext("2d");
-    var player = new Player(CANVAS_WIDTH, CANVAS_HEIGHT, canvas);
     var bullets = [];   // array to store bullet objects
     var enemies = [];   // array to store enemy objects
+    var player = new Player(CANVAS_WIDTH, CANVAS_HEIGHT, canvas, bullets);
+    var score = new Score(CANVAS_WIDTH, CANVAS_HEIGHT, canvas);
     var GAME_OVER = false;
 
     var FPS = 30;
@@ -119,6 +120,7 @@
    function draw() {
      canvas.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
      player.draw();
+     score.draw();
      bullets.forEach(function(bullet){
        bullet.draw();
      });
