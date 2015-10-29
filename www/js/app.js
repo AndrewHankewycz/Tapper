@@ -16,6 +16,7 @@
     32: false
   }
   var enemies = [];   // array to store enemy objects
+  var score;    // reference to score object
   var GAME_OVER = false;
 
   function Bullet(canvasWidth, canvasHeight, position, canvas){
@@ -59,6 +60,7 @@
     // instance variables
     this.bullets = [];
     this.canvas = canvas;
+    this.score = score;
   }
 
   BulletManager.prototype = {
@@ -85,6 +87,7 @@
           if(e.collision({x: b.x, y: b.y})){
             e.explode();
             b.explode();
+            score.increment();
           }
         }); // end for
       }); // end for
@@ -117,33 +120,13 @@
     // add template to page
     $('body').html(newGame);
 
-    // defining some stuff for click listeners and timers
-    // TODO figure out clicking
-    var good = false;
-    function timeIt(){
-      console.log("click");
-      good = true;
-      setTimeout(function(){
-        // if(good)
-          console.log("fire");
-      }, 500);
-      good = false;
-    }
-    function endIt(){
-      good = false;
-    }
-
-    document.addEventListener("click", timeIt());
-    // $(document).click(timeIt());
-    $(document).mouseup(endIt());
-
     // get a reference to the canvas created by Handlbars template
     var canvasElement = $('#game-canvas')[0];
     var canvas = canvasElement.getContext("2d");
     // var enemies = [];   // array to store enemy objects
     bulletMgr = new BulletManager(canvas);
     var player = new Player(CANVAS_WIDTH, CANVAS_HEIGHT, canvas, bulletMgr);
-    var score = new Score(CANVAS_WIDTH, CANVAS_HEIGHT, canvas);
+    score = new Score(CANVAS_WIDTH, CANVAS_HEIGHT, canvas);
     // var GAME_OVER = false;
 
     var FPS = 30;
@@ -219,21 +202,31 @@
      });
    }// end checkEnemyKills()
 
-   // add keyup listener for when arrow keys are pressed
-   $(document).bind("keydown", function(event) {
-     keyStatus[event.keyCode] = true;
-   });
+   // defining some stuff for click listeners and timers
+   var charge;
 
-   // add keyup listener for when arrow keys are released
-   $(document).bind("keyup", function(event) {
-     keyStatus[event.keyCode] = false;
-   });
+   function startCharge(){
+     charge = setTimeout(function(){
+       // if the player hasnt released their touch yet
+       player.shoot();
+     }, 500);
+   }
 
-   // add keyup listener for when arrow keys are released
+   function stopCharge(){
+     clearTimeout(charge);
+   }
+
+   // add keyup listener for when screen touch is pressed
    $(document).bind("touchstart", function(event) {
      var xPos = event.originalEvent.touches[0].pageX;
      player.move(xPos);
-    //  keyStatus[event.keyCode] = false;
+     startCharge();
+   });
+
+   // add keyup listener for when screen touch is released
+   $(document).bind("touchend", function(event) {
+     console.log('end');
+     stopCharge();
    });
 
  } // end loadHomePage()

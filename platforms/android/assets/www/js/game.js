@@ -1,45 +1,11 @@
-function Bullet(canvasWidth, startPos){
-  // instance variables
-  this._CANVAS_WIDTH = canvasWidth;
-  this.active = true;
-  this.yVelocity = -6;   // moving upward
-  this.x = startPos.x;
-  this.y = startPos.y;
-  this.width = 5;
-  this.height = 5;
-  this.color = "#00A";
-
-  return this;
-}
-
-Bullet.prototype = {
-  inBounds: function(){
-    var inside = this.x >= 0 && this.x <= this._CANVAS_WIDTH
-       && this.y >= 0 && this.y <= this._CANVAS_HEIGHT;
-    if(!inside)
-       GAME_OVER = true;
-    return inside;
-  },
-  draw: function(){
-    canvas.fillStyle = this.color;
-    canvas.fillRect(this.x, this.y, this.width, this.height);
-  },
-  update: function(){
-    this.y += this.yVelocity;
-    this.active = this.active && this.inBounds();
-  },
-  explode: function(){
-    this.active = false;
-  }
-};
 
 
 // constructor for player object
-function Player(canvas_width, canvasHeight, canvas, bullets){
+function Player(canvas_width, canvasHeight, canvas, bulletMgr){
   // player instance variables
   this._CANVAS_WIDTH = canvas_width;
   this._CANVAS_HEIGHT = canvasHeight;
-  this._bullets = bullets;
+  this.bulletMgr = bulletMgr;
   this.color = "#00A";
   this.width = this._CANVAS_WIDTH / 3;
   this.height = 50;
@@ -49,7 +15,8 @@ function Player(canvas_width, canvasHeight, canvas, bullets){
   var _xPositions = [0, this._CANVAS_WIDTH / 3, (this._CANVAS_WIDTH / 3) * 2];   // lut for player x positions
   this._x = _xPositions[this._currentPos];
 
-  // draw player
+  // console.log(bullets[0]);
+;  // draw player
   this.draw = function(){
     canvas.fillStyle = this.color;
     canvas.fillRect(this._x, this._y, this.width, this.height);
@@ -76,6 +43,8 @@ function Player(canvas_width, canvasHeight, canvas, bullets){
     var step = this.width;
     var pos = Math.floor(xPos / step);
     this._x = _xPositions[pos];
+    // this._bullets.push(new Bullet(this._CANVAS_WIDTH, this.centerPoint()));
+    // console.log(this._bullets.length);
   }
 
   // get coords of player center point
@@ -95,7 +64,8 @@ function Player(canvas_width, canvasHeight, canvas, bullets){
 
   // player shoots a missile
   this.shoot = function(){
-    this._bullets.push(new Bullet(this._CANVAS_WIDTH, this.centerPoint()));
+    this.bulletMgr.fireBullet(this.centerPoint());
+    // this._bullets.push(new Bullet(this._CANVAS_WIDTH, this.centerPoint()));
   }
 
   // check for collisions with enemy

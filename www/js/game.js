@@ -43,7 +43,6 @@ function Player(canvas_width, canvasHeight, canvas, bulletMgr){
     var step = this.width;
     var pos = Math.floor(xPos / step);
     this._x = _xPositions[pos];
-    this.bulletMgr.fireBullet(this.centerPoint());
     // this._bullets.push(new Bullet(this._CANVAS_WIDTH, this.centerPoint()));
     // console.log(this._bullets.length);
   }
@@ -65,6 +64,7 @@ function Player(canvas_width, canvasHeight, canvas, bulletMgr){
 
   // player shoots a missile
   this.shoot = function(){
+    this.bulletMgr.fireBullet(this.centerPoint());
     // this._bullets.push(new Bullet(this._CANVAS_WIDTH, this.centerPoint()));
   }
 
