@@ -104,7 +104,7 @@
 
   function GameManager(){
     // instance variables
-    this._defaultSpawnRate = .01;
+    this._defaultSpawnRate = .015;
     this.enemySpawnRate = this._defaultSpawnRate;
   }
 
@@ -112,7 +112,7 @@
     // increases enemy spawn rate
     increaseSpawnRate: function(){
       this.enemySpawnRate += .005;
-    }
+    },
 
     // resets the respawn rate when playe loses
     resetSpawnRate: function(){
@@ -199,7 +199,7 @@
      enemies = [];   // clear array
      bulletMgr.clearBullets();  // empty bullet list
      score.reset();
-     gameManager.resetSpawnRate();  
+     gameManager.resetSpawnRate();
      GAME_OVER = false;
    }// end gameOver()
 
