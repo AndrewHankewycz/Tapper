@@ -139,17 +139,24 @@ Enemy.prototype = {
 };
 
 // constructor for Score object
-function Score(canvasWidth, canvasHeight, canvas){
+function Score(canvasWidth, canvasHeight, canvas, gameManager){
   // instance variables
   this._canvas = canvas;
   this._CANVAS_WIDTH = canvasWidth;
   this._CANVAS_HEIGHT = canvasHeight;
+  this._gameManager = gameManager;
   this._score = 0;
   this.color = "#00A";
+  var rateCounter = 0;
 
   // increments score by 1
   this.increment = function(){
     this._score++;
+    rateCounter++;
+    if(rateCounter >= 5){
+      this._gameManager.increaseSpawnRate();
+      rateCounter = 0;
+    }
   }
 
   // resets the score for a new game

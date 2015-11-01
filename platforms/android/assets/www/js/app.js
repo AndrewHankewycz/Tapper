@@ -104,8 +104,8 @@
 
   var bulletMgr;    // create empty pointer for BulletManager
 
-  // define function to load home page
-  function loadHomePage(){
+  // define function to load game
+  function loadGamePage(){
     // compile Handlebars template for game canvas
     var gameTpl = Handlebars.compile($("#game-tpl").html());
 
@@ -118,7 +118,7 @@
     // pass context to Handlebars template
     var newGame = gameTpl(context);
     // add template to page
-    $('body').html(newGame);
+    $('.content-placeholder').html(newGame);
 
     // get a reference to the canvas created by Handlbars template
     var canvasElement = $('#game-canvas')[0];
@@ -171,7 +171,7 @@
         console.log("GAME OVER");
         gameOver();
       }
-      if(Math.random() < .05) {
+      if(Math.random() < .025) {
         enemies.push(new Enemy(CANVAS_WIDTH, CANVAS_HEIGHT, canvas));
       }
     }// end update()
@@ -179,6 +179,7 @@
    function gameOver(){
      enemies = [];   // clear array
      bulletMgr.clearBullets();  // empty bullet list
+     score.reset();
      GAME_OVER = false;
    }// end gameOver()
 
@@ -202,35 +203,56 @@
      });
    }// end checkEnemyKills()
 
-   // defining some stuff for click listeners and timers
+   // defining a variable to store timer interval for charging
    var charge;
 
    function startCharge(){
-     charge = setTimeout(function(){
+     charge = setInterval(function(){
        // if the player hasnt released their touch yet
-       player.shoot();
-     }, 500);
+       player.incrementChargeStep();
+     }, 15);
    }
 
    function stopCharge(){
-     clearTimeout(charge);
+     // clear the finger hold interval event
+     clearInterval(charge);
+     // if the player has reached the charge threashold, shoot
+     if(player.chargeFinished()){
+       player.shoot();
+     }
+     // clear the player charge value
+     player.clearCharge();
    }
 
    // add keyup listener for when screen touch is pressed
-   $(document).bind("touchstart", function(event) {
+   $(document).on("touchstart", function(event) {
      var xPos = event.originalEvent.touches[0].pageX;
      player.move(xPos);
      startCharge();
    });
 
    // add keyup listener for when screen touch is released
-   $(document).bind("touchend", function(event) {
-     console.log('end');
+   $(document).on("touchend", function(event) {
      stopCharge();
    });
 
- } // end loadHomePage()
+ } // end loadGamePage()
+
+ // define function to load home page
+ function loadHomePage(){
+   // compile Handlebars template for home page
+   var homeTpl = Handlebars.compile($("#home-tpl").html());
+
+   // add home template to page
+   $('.content-placeholder').html(homeTpl);
+
+   // listen for button to be pressed, then load game
+   $('#start-btn').on("click", function(){
+     loadGamePage()
+   });
+} // end loadHomePage();
 
  loadHomePage();
+ // loadGamePage();
 
 }());

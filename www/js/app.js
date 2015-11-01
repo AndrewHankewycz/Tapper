@@ -102,6 +102,19 @@
     }
   };
 
+  function GameManager(){
+    // instance variables
+    this.enemySpawnRate = .01;
+  }
+
+  GameManager.prototype = {
+    // increases enemy spawn rate
+    increaseSpawnRate: function(){
+      console.log('incresing rate ' + this.enemySpawnRate);
+      this.enemySpawnRate += .005;
+    }
+  }
+
   var bulletMgr;    // create empty pointer for BulletManager
 
   // define function to load game
@@ -126,7 +139,8 @@
     // var enemies = [];   // array to store enemy objects
     bulletMgr = new BulletManager(canvas);
     var player = new Player(CANVAS_WIDTH, CANVAS_HEIGHT, canvas, bulletMgr);
-    score = new Score(CANVAS_WIDTH, CANVAS_HEIGHT, canvas);
+    var gameManager = new GameManager();
+    score = new Score(CANVAS_WIDTH, CANVAS_HEIGHT, canvas, gameManager);
     // var GAME_OVER = false;
 
     var FPS = 30;
@@ -171,7 +185,7 @@
         console.log("GAME OVER");
         gameOver();
       }
-      if(Math.random() < .025) {
+      if(Math.random() < gameManager.enemySpawnRate) {
         enemies.push(new Enemy(CANVAS_WIDTH, CANVAS_HEIGHT, canvas));
       }
     }// end update()

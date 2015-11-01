@@ -12,11 +12,14 @@
         <param name="android-package" value="org.apache.cordova.dialogs.Notification" />
     </feature>
     <allow-intent href="market:*" />
-    <name>Game</name>
+    <icon density="mdpi" src="res/android/beer_mdpi.png" />
+    <icon density="hdpi" src="res/android/beer_hdpi.png" />
+    <icon density="xhdpi" src="res/android/beer_xhdpi.png" />
+    <name>Tapper</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+        A single-player game where the player must shoot the Enemies without shooting off the screen.
     </description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
+    <author email="ahankewycz@gmail.com" href="http://?">
         Apache Cordova Team
     </author>
     <content src="index.html" />
