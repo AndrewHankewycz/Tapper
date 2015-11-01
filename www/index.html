@@ -5,25 +5,21 @@
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
-        <link rel="stylesheet" type="text/css" href="css/index.css">
+        <link rel="stylesheet" type="text/css" href="css/index.css"/>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
         <script type="text/javascript" src="js/game.js"></script>
     </head>
     <body>
-      <script id="game-tpl" type="text/x-handlebars-template">
-        <canvas id='game-canvas' width='{{width}}' height='{{height}}' style='border:1px solid #000000;'></canvas>
-
+      <script id="home-tpl" type="text/x-handlebars-template">
+        <h1>Tapper</h1>
+        <button id="start-btn" type="button" class="my-button">Start</button>
       </script>
 
-      <script id="home-tpl" type="text/template">
-        <!-- <header class="bar bar-nav">
-            <h1 class="title">Directory</h1>
-        </header> -->
-        <div class="bar bar-standard bar-header-secondary">
-            <input class='search-key' type="search"/>
-        </div>
-        <div class="content">{{width}}x{{height}}</div>
-    </script>
+      <script id="game-tpl" type="text/x-handlebars-template">
+        <canvas id='game-canvas' width='{{width}}' height='{{height}}' style='border:1px solid #000000;'></canvas>
+      </script>
+
+      <div class="content-placeholder"></div>
 
         <!-- <script stype="text/javascript" rc="lib/jquery.js"></script> -->
         <script type="text/javascript" src="lib/handlebars.js"></script>

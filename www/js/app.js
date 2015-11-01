@@ -104,8 +104,8 @@
 
   var bulletMgr;    // create empty pointer for BulletManager
 
-  // define function to load home page
-  function loadHomePage(){
+  // define function to load game
+  function loadGamePage(){
     // compile Handlebars template for game canvas
     var gameTpl = Handlebars.compile($("#game-tpl").html());
 
@@ -118,7 +118,7 @@
     // pass context to Handlebars template
     var newGame = gameTpl(context);
     // add template to page
-    $('body').html(newGame);
+    $('.content-placeholder').html(newGame);
 
     // get a reference to the canvas created by Handlbars template
     var canvasElement = $('#game-canvas')[0];
@@ -171,7 +171,7 @@
         console.log("GAME OVER");
         gameOver();
       }
-      if(Math.random() < .05) {
+      if(Math.random() < .025) {
         enemies.push(new Enemy(CANVAS_WIDTH, CANVAS_HEIGHT, canvas));
       }
     }// end update()
@@ -225,19 +225,34 @@
    }
 
    // add keyup listener for when screen touch is pressed
-   $(document).bind("touchstart", function(event) {
+   $(document).on("touchstart", function(event) {
      var xPos = event.originalEvent.touches[0].pageX;
      player.move(xPos);
      startCharge();
    });
 
    // add keyup listener for when screen touch is released
-   $(document).bind("touchend", function(event) {
+   $(document).on("touchend", function(event) {
      stopCharge();
    });
 
- } // end loadHomePage()
+ } // end loadGamePage()
+
+ // define function to load home page
+ function loadHomePage(){
+   // compile Handlebars template for home page
+   var homeTpl = Handlebars.compile($("#home-tpl").html());
+
+   // add home template to page
+   $('.content-placeholder').html(homeTpl);
+
+   // listen for button to be pressed, then load game
+   $('#start-btn').on("click", function(){
+     loadGamePage()
+   });
+} // end loadHomePage();
 
  loadHomePage();
+ // loadGamePage();
 
 }());
