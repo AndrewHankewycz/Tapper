@@ -104,14 +104,19 @@
 
   function GameManager(){
     // instance variables
-    this.enemySpawnRate = .01;
+    this._defaultSpawnRate = .01;
+    this.enemySpawnRate = this._defaultSpawnRate;
   }
 
   GameManager.prototype = {
     // increases enemy spawn rate
     increaseSpawnRate: function(){
-      console.log('incresing rate ' + this.enemySpawnRate);
       this.enemySpawnRate += .005;
+    }
+
+    // resets the respawn rate when playe loses
+    resetSpawnRate: function(){
+      this.enemySpawnRate = this._defaultSpawnRate;
     }
   }
 
@@ -194,6 +199,7 @@
      enemies = [];   // clear array
      bulletMgr.clearBullets();  // empty bullet list
      score.reset();
+     gameManager.resetSpawnRate();  
      GAME_OVER = false;
    }// end gameOver()
 
