@@ -179,6 +179,7 @@
    function gameOver(){
      enemies = [];   // clear array
      bulletMgr.clearBullets();  // empty bullet list
+     score.reset();
      GAME_OVER = false;
    }// end gameOver()
 
@@ -202,18 +203,25 @@
      });
    }// end checkEnemyKills()
 
-   // defining some stuff for click listeners and timers
+   // defining a variable to store timer interval for charging
    var charge;
 
    function startCharge(){
-     charge = setTimeout(function(){
+     charge = setInterval(function(){
        // if the player hasnt released their touch yet
-       player.shoot();
-     }, 500);
+       player.incrementChargeStep();
+     }, 15);
    }
 
    function stopCharge(){
-     clearTimeout(charge);
+     // clear the finger hold interval event
+     clearInterval(charge);
+     // if the player has reached the charge threashold, shoot
+     if(player.chargeFinished()){
+       player.shoot();
+     }
+     // clear the player charge value
+     player.clearCharge();
    }
 
    // add keyup listener for when screen touch is pressed
@@ -225,7 +233,6 @@
 
    // add keyup listener for when screen touch is released
    $(document).bind("touchend", function(event) {
-     console.log('end');
      stopCharge();
    });
 
